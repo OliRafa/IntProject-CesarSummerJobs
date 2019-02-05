@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Cadastrar">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="180dp"
+            android:layout_marginTop="60dp"
+            android:text="Bonjour"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/txt_nome"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="8dp"
+            android:hint="Nome Completo"
+            android:ems="10"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.488"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <EditText
+            android:id="@+id/txt_doc"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:hint="RG / Passaporte"
+            android:ems="10"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="@+id/txt_nome"
+            app:layout_constraintStart_toStartOf="@+id/txt_nome"
+            app:layout_constraintTop_toBottomOf="@+id/txt_nome" />
+
+        <EditText
+            android:id="@+id/txt_motivo"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:hint="Motivo  da visita"
+            android:ems="10"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="@+id/txt_email"
+            app:layout_constraintStart_toStartOf="@+id/txt_email"
+            app:layout_constraintTop_toBottomOf="@+id/txt_email" />
+
+        <EditText
+            android:id="@+id/txt_email"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:hint="Email"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            app:layout_constraintEnd_toEndOf="@+id/txt_doc"
+            app:layout_constraintStart_toStartOf="@+id/txt_doc"
+            app:layout_constraintTop_toBottomOf="@+id/txt_doc" />
+
+        <EditText
+            android:id="@+id/txt_data_inicio"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="30dp"
+            android:hint="Data de Inicio"
+            android:ems="10"
+            android:inputType="date"
+            app:layout_constraintStart_toStartOf="@+id/txt_motivo"
+            app:layout_constraintTop_toBottomOf="@+id/txt_motivo" />
+
+        <EditText
+            android:id="@+id/txt_data_fim"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:hint="Data de Fim"
+            android:ems="10"
+            android:inputType="date"
+            app:layout_constraintEnd_toEndOf="@+id/txt_motivo"
+            app:layout_constraintTop_toTopOf="@+id/txt_data_inicio" />
+
+        <Button
+            android:id="@+id/btn_concluir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="150dp"
+            android:layout_marginEnd="8dp"
+            android:onClick="concluir"
+            android:text="Concluir"
+            app:layout_constraintEnd_toEndOf="@+id/txt_data_fim"
+            app:layout_constraintStart_toStartOf="@+id/txt_data_inicio"
+            app:layout_constraintTop_toBottomOf="@+id/txt_motivo" />
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>
