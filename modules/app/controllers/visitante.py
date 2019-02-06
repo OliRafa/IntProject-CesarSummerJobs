@@ -5,6 +5,7 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
 from app import app, mongo, flask_bcrypt, jwt
 from app.schemas import validate_visitante, validate_visitante_auth
 from app.controllers import autorizante
+from app.utilities import qr_generator
 import logger
 
 ROOT_PATH = os.environ.get('ROOT_PATH')
@@ -12,37 +13,37 @@ LOG = logger.get_root_logger(
     __name__, filename=os.path.join(ROOT_PATH, 'output.log'))
 
 
-@jwt.unauthorized_loader
-def unauthorized_response(callback):
-    return jsonify({
-        'ok': False,
-        'message': 'Missing Authorization Header'
-    }), 401
+#@jwt.unauthorized_loader
+#def unauthorized_response(callback):
+#    return jsonify({
+#        'ok': False,
+#        'message': 'Missing Authorization Header'
+#    }), 401
+#
+#
+#@app.route('/auth', methods=['POST'])
+#def auth_user():
+#    ''' auth endpoint '''
+#    data = validate_visitante_auth(request.get_json())
+#    if data['ok']:
+#        data = data['data']
+#        user = mongo.db.visitantes.find_one({'rg_passaporte': data['rg_passaporte']}, {"_id": 0})
+#        LOG.debug(user)
+#        if user: #and flask_bcrypt.check_password_hash(user['password'], data['password']):
+#            #del user['password']
+#            access_token = create_access_token(identity=data)
+#            refresh_token = create_refresh_token(identity=data)
+#            user['token'] = access_token
+#            user['refresh'] = refresh_token
+#            return jsonify({'ok': True, 'data': user}), 200
+#        else:
+#            return jsonify({'ok': False, 'message': 'Usuario ou RG/Passaporte invalidos'}), 401
+#    else:
+#        return jsonify({'ok': False, 'message': 'Parametros invalidos: {}'.format(data['message'])}), 400
 
 
-@app.route('/auth', methods=['POST'])
-def auth_user():
-    ''' auth endpoint '''
-    data = validate_visitante_auth(request.get_json())
-    if data['ok']:
-        data = data['data']
-        user = mongo.db.visitantes.find_one({'rg_passaporte': data['rg_passaporte']}, {"_id": 0})
-        LOG.debug(user)
-        if user: #and flask_bcrypt.check_password_hash(user['password'], data['password']):
-            #del user['password']
-            access_token = create_access_token(identity=data)
-            refresh_token = create_refresh_token(identity=data)
-            user['token'] = access_token
-            user['refresh'] = refresh_token
-            return jsonify({'ok': True, 'data': user}), 200
-        else:
-            return jsonify({'ok': False, 'message': 'Usuario ou RG/Passaporte invalidos'}), 401
-    else:
-        return jsonify({'ok': False, 'message': 'Parametros invalidos: {}'.format(data['message'])}), 400
-
-
-@app.route('/register', methods=['POST'])
-def register():
+@app.route('/registro', methods=['POST'])
+def registro():
     ''' register user endpoint '''
     data = validate_visitante(request.get_json())
     if data['ok']:
@@ -57,15 +58,15 @@ def register():
         return jsonify({'ok': False, 'message': 'Parametros invalidos: {}'.format(data['message'])}), 400
 
 
-@app.route('/refresh', methods=['POST'])
-@jwt_refresh_token_required
-def refresh():
-    ''' refresh token endpoint '''
-    current_user = get_jwt_identity()
-    ret = {
-        'token': create_access_token(identity=current_user)
-    }
-    return jsonify({'ok': True, 'data': ret}), 200
+#@app.route('/refresh', methods=['POST'])
+#@jwt_refresh_token_required
+#def refresh():
+#    ''' refresh token endpoint '''
+#    current_user = get_jwt_identity()
+#    ret = {
+#        'token': create_access_token(identity=current_user)
+#    }
+#    return jsonify({'ok': True, 'data': ret}), 200
 
 
 @app.route('/visitante', methods=['DELETE'])
@@ -92,12 +93,11 @@ def get_visitante():
 @app.route('/visitante', methods=['PUT'])
 def update_visitante():
     data = request.get_json()
-    visitante = mongo.db.visitantes.find_one({ 'rg_passaporte': data['rg_passaporte'] })
+    visitante = mongo.db.visitantes.find_one({ '_id': data['_id'] })
     if visitante:
         mongo.db.visitantes.update_one({ '_id': visitante['_id'] }, { '$set': { 'validado': data['validado'] } })
+        #qr_code = qr_generator.generate_qr_code(mongo.db.visitantes.find_one({ '_id': data['_id'] }))
         return jsonify({'ok': True, 'message': 'Visitante atualizado'}), 200
+        #return send_file(qr_code, mimetype='image/jpg'), 200
     else:
         return jsonify({'ok': False, 'message': 'Parametros invalidos'}), 400
-
-def send_notification():
-    pass

@@ -23,14 +23,9 @@ def register_autorizante():
     else:
         return jsonify({'ok': False, 'message': 'Parametros invalidos: {}'.format(data['message'])}), 400
 
-@app.route('/autorizante', methods=['GET', 'DELETE', 'PATCH'])
+@app.route('/autorizante', methods=['DELETE', 'PATCH'])
 #@jwt_required
 def autorizante():
-    ''' route read user '''
-    if request.method == 'GET':
-        query = request.args
-        data = mongo.db.autorizantes.find_one(query, {"_id": 0})
-        return jsonify({'ok': True, 'data': data}), 200
 
     data = request.get_json()
     if request.method == 'DELETE':
@@ -52,6 +47,14 @@ def autorizante():
         else:
             return jsonify({'ok': False, 'message': 'Parametros invalidos'}), 400
 
+@app.route('/autorizante', methods=['GET'])
+def get_autorizantes():
+    data = mongo.db.autorizantes.find()
+    autorizantes = list()
+    for autorizante in data[:]:
+        autorizantes.append(autorizante['nome'])
+    return jsonify({'ok': True, 'data': autorizantes}), 200
+
 def update_autorizante(autorizante, _id):
     _autorizante = mongo.db.autorizantes.find_one({ 'nome': autorizante })
     if _autorizante:
@@ -63,11 +66,14 @@ def update_autorizante(autorizante, _id):
 def push_autorizante():
     data = request.get_json()
     _autorizante = mongo.db.autorizantes.find_one({ 'nome': data['autorizante'] })
-    if len(_autorizante['validacoes']) is not 0:
+    #print(type(_autorizante['validacoes']))
+    #print(type(_autorizante))
+    if 'validacoes' in _autorizante:
         val = list()
         for validacao in _autorizante['validacoes']:
             val.append(mongo.db.visitantes.find_one({ '_id': validacao }))
         val.append({ 'quantidade_validacoes': len(_autorizante['validacoes']) })
         return jsonify(val), 200
-    return jsonify({ 'quantidade_validacoes': 0 }), 200
+    else:
+        return jsonify({ 'quantidade_validacoes': 0 }), 200
 
