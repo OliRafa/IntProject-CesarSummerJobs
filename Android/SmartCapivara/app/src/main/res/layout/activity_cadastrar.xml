@@ -13,13 +13,15 @@
 
         <TextView
             android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="180dp"
-            android:layout_marginTop="60dp"
-            android:text="Bonjour"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_width="150dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="30dp"
+            android:text="Faça upload de uma foto para identificação"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/btn_pic"
+            app:layout_constraintTop_toTopOf="@+id/btn_pic" />
 
         <EditText
             android:id="@+id/txt_nome"
@@ -40,9 +42,9 @@
             android:id="@+id/txt_doc"
             android:layout_width="350dp"
             android:layout_height="50dp"
-            android:layout_marginTop="30dp"
-            android:hint="RG / Passaporte"
+            android:layout_marginTop="20dp"
             android:ems="10"
+            android:hint="RG / Passaporte"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="@+id/txt_nome"
             app:layout_constraintStart_toStartOf="@+id/txt_nome"
@@ -52,9 +54,9 @@
             android:id="@+id/txt_motivo"
             android:layout_width="350dp"
             android:layout_height="50dp"
-            android:layout_marginTop="30dp"
-            android:hint="Motivo  da visita"
+            android:layout_marginTop="20dp"
             android:ems="10"
+            android:hint="Motivo  da visita"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="@+id/txt_email"
             app:layout_constraintStart_toStartOf="@+id/txt_email"
@@ -64,9 +66,9 @@
             android:id="@+id/txt_email"
             android:layout_width="350dp"
             android:layout_height="50dp"
-            android:layout_marginTop="30dp"
-            android:hint="Email"
+            android:layout_marginTop="20dp"
             android:ems="10"
+            android:hint="Email"
             android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="@+id/txt_doc"
             app:layout_constraintStart_toStartOf="@+id/txt_doc"
@@ -76,24 +78,22 @@
             android:id="@+id/txt_data_inicio"
             android:layout_width="150dp"
             android:layout_height="50dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="30dp"
-            android:hint="Data de Inicio"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="20dp"
             android:ems="10"
+            android:hint="Data de Inicio"
             android:inputType="date"
-            app:layout_constraintStart_toStartOf="@+id/txt_motivo"
-            app:layout_constraintTop_toBottomOf="@+id/txt_motivo" />
+            app:layout_constraintStart_toStartOf="@+id/spin_autor"
+            app:layout_constraintTop_toBottomOf="@+id/spin_autor" />
 
         <EditText
             android:id="@+id/txt_data_fim"
             android:layout_width="150dp"
             android:layout_height="50dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:hint="Data de Fim"
             android:ems="10"
+            android:hint="Data de Fim"
             android:inputType="date"
-            app:layout_constraintEnd_toEndOf="@+id/txt_motivo"
+            app:layout_constraintEnd_toEndOf="@+id/spin_autor"
             app:layout_constraintTop_toTopOf="@+id/txt_data_inicio" />
 
         <Button
@@ -101,13 +101,45 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="150dp"
+            android:layout_marginTop="90dp"
             android:layout_marginEnd="8dp"
             android:onClick="concluir"
             android:text="Concluir"
             app:layout_constraintEnd_toEndOf="@+id/txt_data_fim"
+            app:layout_constraintHorizontal_bias="0.442"
             app:layout_constraintStart_toStartOf="@+id/txt_data_inicio"
+            app:layout_constraintTop_toBottomOf="@+id/spin_autor" />
+
+        <Spinner
+            android:id="@+id/spin_autor"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="@+id/txt_motivo"
+            app:layout_constraintStart_toStartOf="@+id/txt_motivo"
             app:layout_constraintTop_toBottomOf="@+id/txt_motivo" />
+
+        <TextView
+            android:id="@+id/lbl_pic_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/cadastro_pic_lbl"
+            app:layout_constraintEnd_toEndOf="@+id/btn_pic"
+            app:layout_constraintStart_toStartOf="@+id/btn_pic"
+            app:layout_constraintTop_toTopOf="@+id/btn_pic" />
+
+        <Button
+            android:id="@+id/btn_pic"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/cadastro_pic_btn"
+            android:onClick="uploadPicture"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </android.support.constraint.ConstraintLayout>
 
 </ScrollView>

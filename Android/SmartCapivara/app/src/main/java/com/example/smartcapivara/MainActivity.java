@@ -30,6 +30,6 @@ public class MainActivity extends AppCompatActivity {
     public void sc_entrar(View v){
         /*Toast.makeText(this, "This is my Toast message!",
                 Toast.LENGTH_LONG).show();*/
-        startActivity(new Intent(MainActivity.this, Gestor.class));
+        startActivity(new Intent(MainActivity.this, Entrar.class));
     }
 }

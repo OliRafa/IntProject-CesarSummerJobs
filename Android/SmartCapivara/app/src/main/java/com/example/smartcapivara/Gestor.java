@@ -12,11 +12,33 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
+import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
+
 public class Gestor extends AppCompatActivity{
+
+    private String ip = "http://179.106.208.38:8080/";
+
+    private String visitante_id;
+    private String autorizante_id;
 
     private ImageView imageView;
 
@@ -29,7 +51,24 @@ public class Gestor extends AppCompatActivity{
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        new Thread(new RequisicaoPush()).start();
+        Pessoa usuario = new Pessoa();
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+
+            if(extras != null) {
+                usuario.setNome( extras.getString("usuario_nome") );
+                usuario.setEmail( extras.getString("usuario_email") );
+                usuario.setRGPassaporte( extras.getString("usuario_documento") );
+                usuario.setID( extras.getString("usuario_id") );
+                usuario.setTipo( extras.getString("usuario_tipo") );
+
+                Log.d("USUARIO", usuario.toString());
+
+                this.autorizante_id = usuario.getID();
+            }
+        }
+
+        //new Thread(new RequisicaoPush()).start();
 
         imageView = (ImageView) findViewById(R.id.img_cliente);
 
@@ -82,22 +121,108 @@ public class Gestor extends AppCompatActivity{
 
 
     private void loadData(){
-        txt_nome.setText("Nicolas Queiroz de Vasconcelos");
-        txt_cargo.setText("Summer");
-        txt_data.setText("07/01/2019");
-        txt_setor.setText("Celtab");
-        txt_matricula.setText("215513200");
+        txt_nome.setText("Exemplo");
+        txt_cargo.setText("Exemplo");
+        txt_data.setText("01/01/200");
+        txt_setor.setText("Exemplo");
+        txt_matricula.setText("999999999");
+
+
+        JSONObject cadastro = new JSONObject();
+
+        try {
+            cadastro.put("autorizante", "hehehe");
+
+            String url = ip + "push";
+
+            StringEntity entity = new StringEntity(cadastro.toString());
+
+            AsyncHttpClient client = new AsyncHttpClient();
+
+            //client.addHeader("autorizante", "huehue");
+            Log.d("JSON", "Enviado: " + cadastro.toString());
+            client.post(getApplicationContext(), url, entity, "application/json", new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray response)                {
+                    Log.d("JSON Requisicao", "Recebido: " + response.toString());
+
+                    for(int i=0;i<response.length();i++){
+                        try{
+                            JSONObject aux = response.getJSONObject(i);
+                            if(aux.get("_id").toString().equals("5c5b2904191c821d5c701a88")){
+                                txt_nome.setText( aux.get("nome").toString() );
+                                txt_cargo.setText( aux.get("motivo").toString() );
+                                txt_data.setText( aux.get("data_inicial").toString() );
+                                txt_setor.setText("Celtab");
+                                txt_matricula.setText( aux.get("rg_passaporte").toString() );
+                                visitante_id = aux.get("_id").toString();
+
+                                Log.i("JSONArray",aux.toString());
+                            }
+                        }
+                        catch (JSONException e){
+                            Log.e("JSONArray", e.getMessage());
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse) {
+                    Log.e("JSON Requisicao", errorResponse.toString());
+                }
+            });
+        }
+        catch (Exception e) {
+            Log.e("JSON Requisicao", e.getMessage());
+        }
+
 
     }
 
     public void gestor_confirm(View v){
-        Toast.makeText(this, "Access confirmed!",
-                Toast.LENGTH_SHORT).show();
+        /*Toast.makeText(this, "Access confirmed!",
+                Toast.LENGTH_SHORT).show();*/
+
+        visitanteValidation(true);
     }
 
     public void gestor_deny(View v){
-        Toast.makeText(this, "Access denied!",
-                Toast.LENGTH_SHORT).show();
+        /*Toast.makeText(this, "Access denied!",
+                Toast.LENGTH_SHORT).show();*/
+
+        visitanteValidation(false);
+    }
+
+    private void visitanteValidation(boolean validation){
+        Log.d("JSON Validation", "ID: " + visitante_id);
+        JSONObject cadastro = new JSONObject();
+        try {
+            cadastro.put("id_autorizante", autorizante_id);
+            cadastro.put("id_visitante", visitante_id);
+            cadastro.put("validado", validation);
+
+            String url = ip + "visitante";
+
+            StringEntity entity = new StringEntity(cadastro.toString());
+
+            AsyncHttpClient client = new AsyncHttpClient();
+
+            Log.d("JSON", "Enviado: " + cadastro.toString());
+            client.put(getApplicationContext(), url, entity, "application/json", new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray response)                {
+                    Log.d("JSON Validation", "Recebido: " + response.toString());
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse) {
+                    Log.e("JSON Validation", errorResponse.toString());
+                }
+            });
+        }
+        catch (Exception e) {
+            Log.e("JSON Validation", e.getMessage());
+        }
     }
 
 
