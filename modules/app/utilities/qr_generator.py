@@ -1,4 +1,6 @@
 import qrcode
+from io import BytesIO
+
 
 def generate_qr_code(input):
     #return qrcode.make(input)
@@ -10,7 +12,12 @@ def generate_qr_code(input):
     )
     qr.add_data(input)
     img = qr.make_image()
-    return img
+
+    byte_io = BytesIO()
+    img.save(byte_io, 'PNG')
+    byte_io.seek(0)
+
+    return byte_io
 
 #address = "/home/summer/Documents/Python/qr-generator/"
 

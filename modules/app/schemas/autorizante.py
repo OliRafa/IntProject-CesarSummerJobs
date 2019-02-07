@@ -46,6 +46,17 @@ autorizante_auth_schema = {
     }
 }
 
+push_schema = {
+    "type": "object",
+    "properties": {
+        "autorizante": {
+            "type": "string"
+        }
+    },
+    "required": ["autorizante"],
+    "additionalProperties": False
+}
+
 
 def validate_autorizante(data):
     try:
@@ -59,6 +70,15 @@ def validate_autorizante(data):
 def validate_autorizante_auth(data):
     try:
         validate(data, autorizante_auth_schema)
+    except ValidationError as e:
+        return {'ok': False, 'message': e}
+    except SchemaError as e:
+        return {'ok': False, 'message': e}
+    return {'ok': True, 'data': data}
+
+def validate_push(data):
+    try:
+        validate(data, push_schema)
     except ValidationError as e:
         return {'ok': False, 'message': e}
     except SchemaError as e:

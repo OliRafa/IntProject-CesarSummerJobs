@@ -46,6 +46,23 @@ visitante_auth_schema = {
     }
 }
 
+visitante_push_schema = {
+    "type": "object",
+    "properties": {
+        "id_visitante": {
+            "type": "string"
+        },
+        "id_autorizante": {
+            "type": "string"
+        },
+        "validado": {
+            "type": "bool"
+        }
+    },
+    "required": ["id_visitante", "id_autorizante", "validado"],
+    "additionalProperties": False
+}
+
 
 def validate_visitante(data):
     try:
@@ -59,6 +76,15 @@ def validate_visitante(data):
 def validate_visitante_auth(data):
     try:
         validate(data, visitante_auth_schema)
+    except ValidationError as e:
+        return {'ok': False, 'message': e}
+    except SchemaError as e:
+        return {'ok': False, 'message': e}
+    return {'ok': True, 'data': data}
+
+def validate_visitante_push(data):
+    try:
+        validate(data, visitante_push_schema)
     except ValidationError as e:
         return {'ok': False, 'message': e}
     except SchemaError as e:
