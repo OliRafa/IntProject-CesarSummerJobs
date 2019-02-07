@@ -1,7 +1,7 @@
 import os
 from flask import request, jsonify
 from flask_jwt_extended import (create_access_token, create_refresh_token,
-                                jwt_required, jwt_refresh_token_required, get_jwt_identity)
+                    jwt_required, jwt_refresh_token_required, get_jwt_identity)
 from app import app, mongo, flask_bcrypt, jwt
 from app.schemas import validate_autorizante, validate_autorizante_auth
 import logger
@@ -21,7 +21,8 @@ def register_autorizante():
         mongo.db.autorizantes.insert_one(data)
         return jsonify({'ok': True, 'message': 'Autorizante registrado'}), 200
     else:
-        return jsonify({'ok': False, 'message': 'Parametros invalidos: {}'.format(data['message'])}), 400
+        return jsonify({'ok': False, 'message': 'Parametros invalidos: {}'
+            .format(data['message'])}), 400
 
 @app.route('/autorizante', methods=['DELETE', 'PATCH'])
 #@jwt_required
@@ -30,7 +31,8 @@ def autorizante():
     data = request.get_json()
     if request.method == 'DELETE':
         if data.get('rg_passport', None) is not None:
-            db_response = mongo.db.autorizantes.delete_one({'rg_passport': data['rg_passport']})
+            db_response = mongo.db.autorizantes.delete_one(
+                {'rg_passport': data['rg_passport']})
             if db_response.deleted_count == 1:
                 response = {'ok': True, 'message': 'Autorizante deletado'}
             else:
@@ -58,14 +60,16 @@ def get_autorizantes():
 def update_autorizante(autorizante, _id):
     _autorizante = mongo.db.autorizantes.find_one({ 'nome': autorizante })
     if _autorizante:
-        mongo.db.autorizantes.update_one({ '_id': _autorizante['_id'] }, { '$push': { 'validacoes': _id } })
+        mongo.db.autorizantes.update_one({ '_id': _autorizante['_id'] },
+                                    { '$push': { 'validacoes': _id } })
         return True
     return False
 
 @app.route('/push', methods=['POST'])
 def push_autorizante():
     data = request.get_json()
-    _autorizante = mongo.db.autorizantes.find_one({ 'nome': data['autorizante'] })
+    _autorizante = mongo.db.autorizantes.find_one(
+                { 'nome': data['autorizante'] })
     #print(type(_autorizante['validacoes']))
     #print(type(_autorizante))
     if 'validacoes' in _autorizante:
