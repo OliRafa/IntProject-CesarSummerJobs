@@ -31,3 +31,14 @@ def auth_user():
         LOG.debug(usuario)
     return jsonify({'ok': False, 'message': 'Parametros invalidos: {}'
                 .format(data['message'])}), 400
+
+@app.route('/qr_code', methods=['POST'])
+def read_qrcode():
+    data = request.get_json()
+    visitante = mongo.db.visitantes.find_one({ 'hash': data['hash'] })
+    if visitante:
+        return jsonify({ 'ok': True, 'data': visitante}), 200
+    else:
+        return jsonify({ 'ok': False, 'data': 'Visitante não encontrado' }), 401
+    return jsonify({'ok': False, 'message': 'Parametros invalidos: {}'
+                .format(data['message'])}), 400
