@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Entity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 import org.json.*;
 import com.loopj.android.http.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -44,15 +48,20 @@ import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 
 public class Cadastrar extends AppCompatActivity {
 
-    private String ip = "http://179.106.208.38:8080/";
+    private String ip_address;
+    private String json_id;
 
     private EditText txt_nome;
     private EditText txt_doc;
+    private EditText txt_phone;
     private EditText txt_email;
     private EditText txt_motivo;
     private EditText txt_data_inicio;
     private EditText txt_data_fim;
     private Spinner spin_autor;
+
+    private ImageView cameraPic;
+    private Bitmap imageToSend; //imagem de cadastro
 
     public static final int GET_FROM_GALLERY = 1;
 
@@ -61,15 +70,29 @@ public class Cadastrar extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastrar);
 
+        this.json_id = "empty";
+
         txt_nome = (EditText) findViewById(R.id.txt_nome);
         txt_doc = (EditText) findViewById(R.id.txt_doc);
+        txt_phone = (EditText) findViewById(R.id.txt_phone);
         txt_email = (EditText) findViewById(R.id.txt_email);
         txt_motivo = (EditText) findViewById(R.id.txt_motivo);
         txt_data_inicio = (EditText) findViewById(R.id.txt_data_inicio);
         txt_data_fim = (EditText) findViewById(R.id.txt_data_fim);
         spin_autor = (Spinner) findViewById(R.id.spin_autor);
 
+        cameraPic = (ImageView) findViewById(R.id.cadastrar_picture);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+
+            if(extras != null) {
+                this.ip_address = extras.getString("ip_address");
+            }
+        }
+
         setVariables();
 
         Log.e("AVISO", "Entrou em Cadastro.");
@@ -78,12 +101,7 @@ public class Cadastrar extends AppCompatActivity {
     }
 
     public boolean onOptionsItemSelected(MenuItem item){
-
-        /*Toast.makeText(this, "Das kann uns keiner nehmen",
-                Toast.LENGTH_SHORT).show();*/
-
-        Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivityForResult(myIntent, 0);
+        finish();
         return true;
     }
 
@@ -91,20 +109,14 @@ public class Cadastrar extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        //Detects request codes
-        if(requestCode==GET_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
-            Uri selectedImage = data.getData();
-            Bitmap bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
+        ImageView icon = (ImageView) findViewById(R.id.lbl_pic_icon);
+        Button btn_pic = (Button) findViewById(R.id.btn_pic);
+        icon.setBackgroundResource(0);
+        btn_pic.setBackgroundResource(0);
+
+
+        imageToSend = (Bitmap) data.getExtras().get("data");
+        cameraPic.setImageBitmap(imageToSend);
     }
 
 
@@ -113,7 +125,7 @@ public class Cadastrar extends AppCompatActivity {
         /**
          * Manipula Spinner
          */
-        String url = ip + "autorizante";
+        String url = this.ip_address + "/autorizante";
 
         final List<String> list;
 
@@ -166,13 +178,26 @@ public class Cadastrar extends AppCompatActivity {
                 android.R.layout.simple_spinner_item, list);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spin_autor.setAdapter(adapter);
+
+        /*txt_nome.setHighlightColor(Color.rgb(255,165,0));*/
+        /*txt_nome.setHintTextColor(Color.rgb(230,115,38));
+        txt_email.setHintTextColor(Color.rgb(230,115,38));
+        txt_motivo.setHintTextColor(Color.rgb(230,115,38));
+        txt_phone.setHintTextColor(Color.rgb(230,115,38));
+        txt_doc.setHintTextColor(Color.rgb(230,115,38));
+        txt_data_fim.setHintTextColor(Color.rgb(230,115,38));
+        txt_data_inicio.setHintTextColor(Color.rgb(230,115,38));
+
+        txt_nome.setTextColor(Color.rgb(230,115,38));
+
+        txt_email.setDrawingCacheBackgroundColor(Color.rgb(230,115,38));*/
     }
 
     public void uploadPicture(View v){
         /*Toast.makeText(this, "Upload your picture",
                 Toast.LENGTH_SHORT).show();*/
-
-        startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent,0);
     }
 
     public void loadWebFromURL(){
@@ -190,7 +215,136 @@ public class Cadastrar extends AppCompatActivity {
      * @param v
      */
     public void concluir(View v){
+        String nome = "" , email = "", motivo= "", autorizante = "", data_inicio = "", data_fim = "", doc = "", phone = "";
 
+        if(entradasValidas()){
+
+            nome = txt_nome.getText().toString();
+            doc = txt_doc.getText().toString();
+            phone = txt_phone.getText().toString();
+            email = txt_email.getText().toString();
+            motivo = txt_motivo.getText().toString();
+            autorizante = spin_autor.getSelectedItem().toString();
+            data_inicio = txt_data_inicio.getText().toString();
+            data_fim = txt_data_fim.getText().toString();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            imageToSend.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] imageBytes = baos.toByteArray();
+            String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
+            /**
+             * Envia dados de cadastro
+             */
+            JSONObject cadastro = new JSONObject();
+
+            try {
+                cadastro.put("nome", nome);
+                cadastro.put("email", email);
+                cadastro.put("fone", phone);
+                cadastro.put("rg_passaporte", doc);
+                cadastro.put("data_final", data_fim);
+                cadastro.put("data_inicial", data_inicio);
+                cadastro.put("motivo", motivo);
+                cadastro.put("autorizante", autorizante);
+                cadastro.put("foto", encodedImage);
+
+                try {
+                    Log.d("CADASTRO", cadastro.toString());
+
+                    String url = this.ip_address + "/registro";
+
+                    StringEntity entity = new StringEntity(cadastro.toString());
+
+                    AsyncHttpClient client = new AsyncHttpClient();
+
+                    client.post(getApplicationContext(), url, entity, "application/json", new JsonHttpResponseHandler(){
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response)
+                        {
+                            Log.d("CADASTRO DADOS", "Enviado. " + response.toString());
+                            /*try{
+                                if( Boolean.parseBoolean(response.get("ok").toString()) ){
+                                    Cadastrar.this.json_id = response.get("_id").toString();
+                                }
+                            }
+                            catch(JSONException e){
+                                Log.e("CADASTRO DADOS", e.getMessage());
+                            }*/
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse)
+                        {
+                            Log.e("CADASTRO DADOS", errorResponse.toString());
+                        }
+                    });
+                }
+                catch (Exception e) {
+                    Log.e("CADASTRO DADOS", e.getMessage());
+                }
+
+
+            }
+            catch (JSONException e){
+                Log.e("ERRO JSON", e.getMessage());
+            }
+
+        }
+
+        //sendPicture();
+
+    }
+
+    private  void sendPicture(){
+
+        if(!this.json_id.equals("empty")){
+            //JSONObject picBitmap = new JSONObject();
+            Log.d("UPLOAD PICTURE", "Entrou: " + this.json_id);
+            try {
+                /*ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                imageToSend.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] imageBytes = baos.toByteArray();
+                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
+                picBitmap.put("foto", encodedImage);*/
+
+                try {
+                    Log.d("VAI ENVIAR IMAGEM", imageToSend.toString());
+
+                    String url = this.ip_address + "/teste";
+
+                    StringEntity entity = new StringEntity(imageToSend.toString());
+
+                    AsyncHttpClient client = new AsyncHttpClient();
+
+                    client.post(getApplicationContext(), url, entity, "application/json", new JsonHttpResponseHandler(){
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response)
+                        {
+                            Log.d("ENVIOU IMAGEM", "Enviado. " + response.toString());
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse)
+                        {
+                            Log.e("ERRO IMAGEM", errorResponse.toString());
+                        }
+                    });
+                }
+                catch (Exception e) {
+                    Log.e("ERRO IMAGEM", e.getMessage());
+                }
+
+
+            }
+            catch (Exception e){
+                Log.e("ERRO JSON", e.getMessage());
+            }
+        }
+    }
+
+    private boolean entradasValidas(){
         String nome = "" , email = "", motivo= "", autorizante = "", data_inicio = "", data_fim = "", doc = "";
         int val = 0;
 
@@ -338,81 +492,7 @@ public class Cadastrar extends AppCompatActivity {
                     break;
             }
         }
-        else{
-            /**
-             * Envia dados de cadastro
-             */
 
-            Toast.makeText(this, "Pronto para enviar",
-                    Toast.LENGTH_SHORT).show();
-
-            /*Log.e("CADASTRO", "Nome: " + nome);
-            Log.e("CADASTRO", "Documento: " + doc);
-            Log.e("CADASTRO", "Email: " + email);
-            Log.e("CADASTRO", "Autorizante: " + autorizante);
-            Log.e("CADASTRO", "Motivo: " + motivo);
-            Log.e("CADASTRO", "Data de Inicio: " + data_inicio);
-            Log.e("CADASTRO", "Data de Fim: " + data_fim);*/
-
-
-            JSONObject cadastro = new JSONObject();
-
-            try {
-                cadastro.put("nome", nome);
-                cadastro.put("email", email);
-                cadastro.put("fone", "33214569");
-                cadastro.put("rg_passaporte", doc);
-                cadastro.put("data_final", data_fim);
-                cadastro.put("data_inicial", data_inicio);
-                cadastro.put("motivo", motivo);
-                cadastro.put("autorizante", autorizante);
-
-                try {
-                    Log.d("CADASTRO", cadastro.toString());
-
-                    String url = ip + "registro";
-
-                    StringEntity entity = new StringEntity(cadastro.toString());
-
-                    AsyncHttpClient client = new AsyncHttpClient();
-
-                    client.post(getApplicationContext(), url, entity, "application/json", new JsonHttpResponseHandler()
-                    {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response)
-                        {
-                            Log.d("JSON", "Enviado");
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse)
-                        {
-                            Log.e("JSON", errorResponse.toString());
-                        }
-                    });
-                }
-                catch (Exception e) {
-                    Log.e("JWP", e.getMessage());
-                }
-
-
-            }
-            catch (JSONException e){
-                Log.e("ERRO JSON", e.getMessage());
-            }
-
-        }
-
-        /*JSONObject cadastroJSON = new JSONObject();
-        try {
-            cadastroJSON.put("name", txt_nome.getText().toString());
-
-            //new SendDeviceDetails().execute("http://52.88.194.67:8080/IOTProjectServer/registerDevice", cadastroJSON.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-
-
-
+        return true;
     }
 }

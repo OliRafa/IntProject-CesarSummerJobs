@@ -1,7 +1,10 @@
 package com.example.smartcapivara;
 
 public class Pessoa {
-    private String id,setor, motivo, nascimento, data_inicio, data_fim, email, nome, fone, rg_passaporte, tipo;
+    private String id,setor, motivo, nascimento,
+            data_inicio, data_fim, email, nome,
+            fone, rg_passaporte, tipo,
+    autorizante;
 
 
     public void setID(String newId){
@@ -48,6 +51,10 @@ public class Pessoa {
         this.tipo = newTipo;
     }
 
+    public void setAutorizante(String newAutorizante){
+        this.autorizante = newAutorizante;
+    }
+
 
     public String getID(){
         return this.id;
@@ -92,6 +99,8 @@ public class Pessoa {
     public String getTipo(){
         return this.tipo;
     }
+
+    public String getAutorizante(){ return this.autorizante; }
 
     public String toString(){
         String aux;

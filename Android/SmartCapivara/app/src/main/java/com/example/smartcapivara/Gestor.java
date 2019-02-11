@@ -35,10 +35,10 @@ import cz.msebera.android.httpclient.impl.client.HttpClientBuilder;
 
 public class Gestor extends AppCompatActivity{
 
-    private String ip = "http://179.106.208.38:8080/";
-
+    private String ip_address;
     private String visitante_id;
-    private String autorizante_id;
+
+    private  Pessoa usuario;
 
     private ImageView imageView;
 
@@ -51,7 +51,7 @@ public class Gestor extends AppCompatActivity{
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Pessoa usuario = new Pessoa();
+        this.usuario = new Pessoa();
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
 
@@ -62,9 +62,12 @@ public class Gestor extends AppCompatActivity{
                 usuario.setID( extras.getString("usuario_id") );
                 usuario.setTipo( extras.getString("usuario_tipo") );
 
-                Log.d("USUARIO", usuario.toString());
+                visitante_id = extras.getString("visitante_id");
 
-                this.autorizante_id = usuario.getID();
+                this.ip_address = extras.getString("ip_address");
+
+                Log.d("ACTIVITY STARTED", "IP ADDRESS" + this.ip_address );
+                Log.d("USUARIO", usuario.toString());
             }
         }
 
@@ -85,12 +88,7 @@ public class Gestor extends AppCompatActivity{
 
 
     public boolean onOptionsItemSelected(MenuItem item){
-
-        /*Toast.makeText(this, "Das kann uns keiner nehmen",
-                Toast.LENGTH_SHORT).show();*/
-
-        Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivityForResult(myIntent, 0);
+        finish();
         return true;
     }
 
@@ -131,15 +129,14 @@ public class Gestor extends AppCompatActivity{
         JSONObject cadastro = new JSONObject();
 
         try {
-            cadastro.put("autorizante", "hehehe");
+            cadastro.put("autorizante", usuario.getNome());
 
-            String url = ip + "push";
+            String url = this.ip_address + "/push";
 
             StringEntity entity = new StringEntity(cadastro.toString());
 
             AsyncHttpClient client = new AsyncHttpClient();
 
-            //client.addHeader("autorizante", "huehue");
             Log.d("JSON", "Enviado: " + cadastro.toString());
             client.post(getApplicationContext(), url, entity, "application/json", new JsonHttpResponseHandler() {
                 @Override
@@ -149,13 +146,12 @@ public class Gestor extends AppCompatActivity{
                     for(int i=0;i<response.length();i++){
                         try{
                             JSONObject aux = response.getJSONObject(i);
-                            if(aux.get("_id").toString().equals("5c5b2904191c821d5c701a88")){
+                            if(aux.get("_id").toString().equals(Gestor.this.visitante_id)){
                                 txt_nome.setText( aux.get("nome").toString() );
                                 txt_cargo.setText( aux.get("motivo").toString() );
                                 txt_data.setText( aux.get("data_inicial").toString() );
                                 txt_setor.setText("Celtab");
                                 txt_matricula.setText( aux.get("rg_passaporte").toString() );
-                                visitante_id = aux.get("_id").toString();
 
                                 Log.i("JSONArray",aux.toString());
                             }
@@ -180,28 +176,24 @@ public class Gestor extends AppCompatActivity{
     }
 
     public void gestor_confirm(View v){
-        /*Toast.makeText(this, "Access confirmed!",
-                Toast.LENGTH_SHORT).show();*/
-
         visitanteValidation(true);
+        finish();
     }
 
     public void gestor_deny(View v){
-        /*Toast.makeText(this, "Access denied!",
-                Toast.LENGTH_SHORT).show();*/
-
         visitanteValidation(false);
+        finish();
     }
 
     private void visitanteValidation(boolean validation){
         Log.d("JSON Validation", "ID: " + visitante_id);
         JSONObject cadastro = new JSONObject();
         try {
-            cadastro.put("id_autorizante", autorizante_id);
+            cadastro.put("id_autorizante", usuario.getID());
             cadastro.put("id_visitante", visitante_id);
             cadastro.put("validado", validation);
 
-            String url = ip + "visitante";
+            String url = this.ip_address + "/visitante";
 
             StringEntity entity = new StringEntity(cadastro.toString());
 
