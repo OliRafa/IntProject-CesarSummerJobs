@@ -13,14 +13,14 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String ip_address = "http://179.106.208.36:8080";
+    private String ip_address = "http://179.106.208.202:8080";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d("ACTIVITY STARTED", "IP ADDRESS" + this.ip_address );
+        Log.d("ACTIVITY Main", "IP ADDRESS: " + this.ip_address );
     }
 
     public void sc_cadastrar(View v){
@@ -42,8 +42,15 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void sc_historico(View v){
+    /*public void sc_historico(View v){
         Intent intent = new Intent(MainActivity.this, Historico.class);
+
+        intent.putExtra("usuario_nome", "Nicolas Queiroz" );
+        intent.putExtra("usuario_id", "56s1c56d1cd54cd45dad54" );
+        intent.putExtra("usuario_tipo", "autorizante" );
+        intent.putExtra("usuario_documento", "12345678-9" );
+        intent.putExtra("usuario_email", "nicolas.queiroz@nicolas.com" );
+
         startActivity(intent);
-    }
+    }*/
 }

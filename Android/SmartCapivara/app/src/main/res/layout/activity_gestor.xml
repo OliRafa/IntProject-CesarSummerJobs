@@ -7,114 +7,122 @@
     tools:context=".Gestor">
 
     <TextView
-        android:id="@+id/background"
+        android:id="@+id/main_background"
         android:layout_width="wrap_content"
         android:layout_height="450dp"
         android:background="@drawable/gestor_app_background"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
     <ImageView
-        android:id="@+id/img_cliente"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:id="@+id/gestor_img_cliente"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginStart="19dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.447"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/main_background" />
 
 
     <TextView
-        android:id="@+id/lbl_cargo"
+        android:id="@+id/gestor_lbl_cargo"
         android:layout_width="60dp"
         android:layout_height="30dp"
-        android:layout_marginTop="272dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/gestor_lbl_cargo"
-        app:layout_constraintEnd_toEndOf="@+id/background"
-        app:layout_constraintHorizontal_bias="0.51"
-        app:layout_constraintStart_toStartOf="@+id/background"
-        app:layout_constraintTop_toTopOf="@+id/background" />
+        app:layout_constraintEnd_toEndOf="@+id/main_background"
+        app:layout_constraintHorizontal_bias="0.481"
+        app:layout_constraintStart_toStartOf="@+id/main_background"
+        app:layout_constraintTop_toBottomOf="@+id/gestor_txt_nome" />
 
     <TextView
-        android:id="@+id/lbl_data"
+        android:id="@+id/gestor_lbl_datainicio"
         android:layout_width="100dp"
         android:layout_height="30dp"
         android:layout_marginEnd="50dp"
-        android:background="@drawable/gestor_lbl_data"
-        app:layout_constraintEnd_toStartOf="@+id/lbl_setor"
-        app:layout_constraintTop_toTopOf="@+id/lbl_setor" />
+        android:background="@drawable/visitante_lbl_data"
+        app:layout_constraintEnd_toEndOf="@+id/gestor_lbl_cargo"
+        app:layout_constraintTop_toTopOf="@+id/gestor_lbl_datafim" />
 
     <TextView
-        android:id="@+id/lbl_setor"
-        android:layout_width="50dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="60dp"
-        android:background="@drawable/gestor_lbl_setor"
-        app:layout_constraintEnd_toEndOf="@+id/lbl_cargo"
-        app:layout_constraintStart_toStartOf="@+id/lbl_cargo"
-        app:layout_constraintTop_toBottomOf="@+id/lbl_cargo" />
-
-    <TextView
-        android:id="@+id/lbl_matricula"
-        android:layout_width="100dp"
+        android:id="@+id/gestor_lbl_datafim"
+        android:layout_width="80dp"
         android:layout_height="30dp"
         android:layout_marginStart="50dp"
-        android:background="@drawable/gestor_lbl_matricula"
-        app:layout_constraintStart_toEndOf="@+id/lbl_setor"
-        app:layout_constraintTop_toTopOf="@+id/lbl_setor" />
+        android:layout_marginTop="60dp"
+        android:background="@drawable/visitante_lbl_data_fim"
+        app:layout_constraintStart_toStartOf="@+id/gestor_lbl_cargo"
+        app:layout_constraintTop_toBottomOf="@+id/gestor_lbl_cargo" />
 
     <TextView
-        android:id="@+id/txt_cargo"
+        android:id="@+id/gestor_lbl_motivo"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="80dp"
+        android:text="Motivo"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimary"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/gestor_lbl_cargo"
+        app:layout_constraintStart_toStartOf="@+id/gestor_lbl_cargo"
+        app:layout_constraintTop_toTopOf="@+id/gestor_lbl_datafim" />
+
+    <TextView
+        android:id="@+id/gestor_txt_cargo"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_marginTop="28dp"
         android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@+id/lbl_cargo"
-        app:layout_constraintStart_toStartOf="@+id/lbl_cargo"
-        app:layout_constraintTop_toTopOf="@+id/lbl_cargo" />
+        app:layout_constraintEnd_toEndOf="@+id/gestor_lbl_cargo"
+        app:layout_constraintStart_toStartOf="@+id/gestor_lbl_cargo"
+        app:layout_constraintTop_toTopOf="@+id/gestor_lbl_cargo" />
 
     <TextView
-        android:id="@+id/txt_data"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintStart_toStartOf="@+id/lbl_data"
-        app:layout_constraintTop_toTopOf="@+id/lbl_data" />
-
-    <TextView
-        android:id="@+id/txt_setor"
+        android:id="@+id/gestor_txt_datainicio"
         android:layout_width="100dp"
         android:layout_height="30dp"
         android:layout_marginTop="30dp"
         android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="@+id/lbl_setor"
-        app:layout_constraintStart_toStartOf="@+id/lbl_setor"
-        app:layout_constraintTop_toTopOf="@+id/lbl_setor" />
+        app:layout_constraintStart_toStartOf="@+id/gestor_lbl_datainicio"
+        app:layout_constraintTop_toTopOf="@+id/gestor_lbl_datainicio" />
 
     <TextView
-        android:id="@+id/txt_matricula"
+        android:id="@+id/gestor_txt_datafim"
         android:layout_width="100dp"
         android:layout_height="30dp"
         android:layout_marginTop="30dp"
-        android:textAlignment="viewStart"
-        app:layout_constraintStart_toStartOf="@+id/lbl_matricula"
-        app:layout_constraintTop_toTopOf="@+id/lbl_matricula" />
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="@+id/gestor_lbl_datafim"
+        app:layout_constraintStart_toStartOf="@+id/gestor_lbl_datafim"
+        app:layout_constraintTop_toTopOf="@+id/gestor_lbl_datafim" />
 
     <TextView
-        android:id="@+id/txt_nome"
+        android:id="@+id/gestor_txt_motivo"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="30dp"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="@+id/gestor_lbl_motivo"
+        app:layout_constraintTop_toTopOf="@+id/gestor_lbl_motivo" />
+
+    <TextView
+        android:id="@+id/gestor_txt_nome"
         android:layout_width="match_parent"
         android:layout_height="37dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
         android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/lbl_cargo"
-        app:layout_constraintEnd_toEndOf="@+id/lbl_cargo"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="@+id/lbl_cargo" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/main_background"
+        app:layout_constraintTop_toBottomOf="@+id/gestor_img_cliente" />
 
     <TextView
         android:id="@+id/lbl_deny"
@@ -144,7 +152,7 @@
         android:layout_marginTop="50dp"
         android:background="@drawable/gestor_btn_border_green"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/background" />
+        app:layout_constraintTop_toBottomOf="@+id/main_background" />
 
     <TextView
         android:id="@+id/btn_confirm"

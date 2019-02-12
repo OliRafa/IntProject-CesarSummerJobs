@@ -1,12 +1,7 @@
 package com.example.smartcapivara;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Entity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -27,23 +21,11 @@ import org.json.*;
 import com.loopj.android.http.*;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.client.ClientProtocolException;
-import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.entity.StringEntity;
-import cz.msebera.android.httpclient.impl.client.BasicResponseHandler;
-import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 
 
 public class Cadastrar extends AppCompatActivity {
@@ -72,7 +54,7 @@ public class Cadastrar extends AppCompatActivity {
 
         this.json_id = "empty";
 
-        txt_nome = (EditText) findViewById(R.id.txt_nome);
+        txt_nome = (EditText) findViewById(R.id.gestor_txt_nome);
         txt_doc = (EditText) findViewById(R.id.txt_doc);
         txt_phone = (EditText) findViewById(R.id.txt_phone);
         txt_email = (EditText) findViewById(R.id.txt_email);
@@ -271,6 +253,7 @@ public class Cadastrar extends AppCompatActivity {
                             catch(JSONException e){
                                 Log.e("CADASTRO DADOS", e.getMessage());
                             }*/
+                            Cadastrar.this.finish();
                         }
 
                         @Override

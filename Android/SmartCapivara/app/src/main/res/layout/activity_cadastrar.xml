@@ -24,7 +24,7 @@
             app:layout_constraintTop_toTopOf="@+id/btn_pic" />
 
         <EditText
-            android:id="@+id/txt_nome"
+            android:id="@+id/gestor_txt_nome"
             android:layout_width="350dp"
             android:layout_height="50dp"
             android:layout_marginStart="8dp"
@@ -46,9 +46,9 @@
             android:ems="10"
             android:hint="RG / Passaporte"
             android:inputType="textPersonName"
-            app:layout_constraintEnd_toEndOf="@+id/txt_nome"
-            app:layout_constraintStart_toStartOf="@+id/txt_nome"
-            app:layout_constraintTop_toBottomOf="@+id/txt_nome" />
+            app:layout_constraintEnd_toEndOf="@+id/gestor_txt_nome"
+            app:layout_constraintStart_toStartOf="@+id/gestor_txt_nome"
+            app:layout_constraintTop_toBottomOf="@+id/gestor_txt_nome" />
 
         <EditText
             android:id="@+id/txt_phone"
@@ -119,13 +119,13 @@
 
         <ImageView
             android:id="@+id/btn_concluir"
-            android:layout_width="150dp"
+            android:layout_width="350dp"
             android:layout_height="50dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="90dp"
             android:layout_marginEnd="8dp"
-            android:onClick="concluir"
             android:background="@drawable/cadastro_concluir_btn"
+            android:onClick="concluir"
             app:layout_constraintEnd_toEndOf="@+id/txt_data_fim"
             app:layout_constraintHorizontal_bias="0.442"
             app:layout_constraintStart_toStartOf="@+id/txt_data_inicio"
@@ -133,13 +133,15 @@
 
         <ImageView
             android:id="@+id/btn_concluir_text"
-            android:layout_width="100dp"
+            android:layout_width="90dp"
             android:layout_height="30dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/cadastro_concluir_lbl"
             app:layout_constraintBottom_toBottomOf="@+id/btn_concluir"
             app:layout_constraintEnd_toEndOf="@+id/btn_concluir"
             app:layout_constraintStart_toStartOf="@+id/btn_concluir"
-            app:layout_constraintTop_toTopOf="@+id/btn_concluir" />
+            app:layout_constraintTop_toTopOf="@+id/btn_concluir"
+            app:layout_constraintVertical_bias="0.0" />
 
 
         <ImageView
@@ -171,6 +173,34 @@
             app:layout_constraintEnd_toEndOf="@+id/btn_pic"
             app:layout_constraintStart_toStartOf="@+id/btn_pic"
             app:layout_constraintTop_toTopOf="@+id/btn_pic" />
+
+        <TextView
+            android:id="@+id/cadastrar_lbl_PTI"
+            android:layout_width="85dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="60dp"
+            android:background="@drawable/cadastro_lbl_pti"
+            app:layout_constraintStart_toStartOf="@+id/btn_concluir_text"
+            app:layout_constraintTop_toTopOf="@+id/cadastrar_lbl_int" />
+
+        <TextView
+            android:id="@+id/cadastrar_lbl_int"
+            android:layout_width="40dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="65dp"
+            android:background="@drawable/cadastro_lbl_int"
+            app:layout_constraintEnd_toEndOf="@+id/btn_concluir_text"
+            app:layout_constraintTop_toBottomOf="@+id/btn_concluir" />
+
+        <TextView
+            android:id="@+id/cadastrar_lbl_footer"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/cadastro_app_footer"
+            app:layout_constraintTop_toBottomOf="@+id/btn_concluir"
+            tools:layout_editor_absoluteX="16dp" />
 
     </android.support.constraint.ConstraintLayout>
 

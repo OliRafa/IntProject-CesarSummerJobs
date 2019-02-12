@@ -74,7 +74,7 @@ public class Visitante extends AppCompatActivity {
 
                 this.ip_address = extras.getString("ip_address");
 
-                Log.d("ACTIVITY STARTED", "IP ADDRESS" + this.ip_address );
+                Log.d("ACTIVITY Visitante", "IP ADDRESS: " + this.ip_address );
                 Log.d("USUARIO", usuario.toString());
 
             }

@@ -36,7 +36,7 @@ public class Entrar extends AppCompatActivity {
 
             if(extras != null) {
                 this.ip_address = extras.getString("ip_address");
-                Log.d("ACTIVITY STARTED", "IP ADDRESS" + this.ip_address );
+                Log.d("ACTIVITY Entrar", "IP ADDRESS: " + this.ip_address );
             }
         }
 
@@ -79,13 +79,14 @@ public class Entrar extends AppCompatActivity {
 
                         if(usuario.getTipo().equals("autorizante")){
                             Log.d("LOGIN", "LOG INTO AUTORIZANTE");
-                            Intent intent = new Intent(Entrar.this, Gestor.class);
+                            Intent intent = new Intent(Entrar.this, Historico.class);
 
                             intent.putExtra("usuario_nome", usuario.getNome());
                             intent.putExtra("usuario_id", usuario.getID());
                             intent.putExtra("usuario_tipo", usuario.getTipo());
                             intent.putExtra("usuario_documento", usuario.getRGPassaporte());
                             intent.putExtra("usuario_email", usuario.getEmail());
+
 
                             intent.putExtra("ip_address", Entrar.this.ip_address);
                             startActivity(intent);
