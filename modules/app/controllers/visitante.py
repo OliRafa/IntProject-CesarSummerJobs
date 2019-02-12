@@ -10,6 +10,8 @@ from app.controllers import autorizante
 from app.utilities import generate_qr_code
 import logger
 from gridfs import GridFS
+import base64
+
 
 ROOT_PATH = os.environ.get('ROOT_PATH')
 LOG = logger.get_root_logger(
@@ -20,14 +22,20 @@ def registro():
     data = validate_visitante(request.get_json())
     if data['ok']:
         data = data['data']
+        photo_base64 = data.pop('foto')
         data.update({ 'validado': False })
-        mongo.db.visitantes.insert_one(data)
+        _id = mongo.db.visitantes.insert_one(data)
+        photo_decoded = base64.decodebytes(str.encode(photo_base64))
+
+        fs = GridFS(mongo.db)
+        photo_id = fs.put(photo_decoded)
+        mongo.db.visitantes.update_one({ '_id': ObjectId(_id.inserted_id) },
+                    { '$set': { 'foto_id': photo_id } })
         if autorizante.update_autorizante(data['autorizante'], data['_id']):
-            return jsonify({'ok': True, 'message': 'Visitante registrado'}), 200
+            return jsonify({'ok': True, '_id': data['_id']}), 200
     else:
         return jsonify({'ok': False, 'message': 'Parametros invalidos: {}'
                                         .format(data['message'])}), 400
-
 
 @app.route('/visitante', methods=['DELETE'])
 def user():    

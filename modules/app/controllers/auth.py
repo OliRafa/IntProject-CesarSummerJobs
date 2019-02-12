@@ -4,6 +4,7 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
                     jwt_required, jwt_refresh_token_required, get_jwt_identity)
 from app import app, mongo, flask_bcrypt, jwt
 from app.schemas import validate_auth
+from app.utilities import convert_photo_to_base64
 import logger
 
 ROOT_PATH = os.environ.get('ROOT_PATH')
@@ -17,13 +18,22 @@ def auth_user():
         data = data['data']
         usuario = mongo.db.visitantes.find_one(
             { 'rg_passaporte': data['rg_passaporte'] })
+
         if usuario:
+            if 'foto_id' in usuario.keys():
+                usuario.pop('foto_id')
+                usuario.update({ 'foto': convert_photo_to_base64(usuario['foto_id']) })
+
             return jsonify({ 'ok': True,'tipo_usuario': 'visitante',
                 'data': usuario }), 200
         else:
             usuario = mongo.db.autorizantes.find_one(
                 { 'rg_passaporte': data['rg_passaporte'] })
             if usuario:
+                if 'foto_id' in usuario.keys():
+                    usuario.pop('foto_id')
+                    usuario.update({ 'foto': convert_photo_to_base64(usuario['foto_id']) })
+
                 return jsonify({ 'ok': True,'tipo_usuario': 'autorizante',
                     'data': usuario }), 200
             else:

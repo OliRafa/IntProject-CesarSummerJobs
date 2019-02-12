@@ -1,7 +1,3 @@
-# USAGE
-# python smart-capivara.py --encodings encodings.pickle
-
-# import the necessary packages
 from imutils.video import VideoStream
 from pyzbar import pyzbar
 import face_recognition
@@ -29,7 +25,6 @@ def get_index(info):
 		try:
 			a = int(info)
 			b = int( df["Documento"].get(i) )
-			#print(str(a) + "\t" + str(b))
 			if a == b:
 				return i
 		except:

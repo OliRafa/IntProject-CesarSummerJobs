@@ -30,9 +30,12 @@ visitante_schema = {
         },
         "motivo": {
             "type": "string",
+        },
+        "foto": {
+            "type": "string"
         }
     },
-    "required": ["nome", "rg_passaporte", "autorizante", "data_inicial", "data_final", "motivo"],
+    "required": ["nome", "rg_passaporte", "autorizante", "data_inicial", "data_final", "motivo", "foto"],
     "additionalProperties": False
 }
 
