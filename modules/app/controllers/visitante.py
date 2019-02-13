@@ -62,7 +62,8 @@ def get_status_visitante(_id):
 @app.route('/visitante', methods=['PUT'])
 def update_visitante():
     data = request.get_json()
-    visitante = mongo.db.visitantes.find_one({ '_id': ObjectId(data['id_visitante']) })
+    visitante = mongo.db.visitantes.find_one({ '_id': 
+        ObjectId(data['id_visitante']) })
     if visitante:
         query = dict()
         if data['validado']:
@@ -82,7 +83,9 @@ def update_visitante():
 
         mongo.db.visitantes.update_one({ '_id': visitante['_id'] },
                 { '$set': query })
-        mongo.db.autorizantes.find_one_and_update({ '_id': ObjectId(data['id_autorizante']) }, { '$pull': { 'validacoes': ObjectId(visitante['_id']) } })
+        mongo.db.autorizantes.find_one_and_update({ '_id': 
+            ObjectId(data['id_autorizante']) }, 
+            { '$pull': { 'validacoes': ObjectId(visitante['_id']) } })
         
         return jsonify({'ok': True, 'message': 'Visitante autorizado'}), 200
     else:

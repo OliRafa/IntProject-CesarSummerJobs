@@ -16,111 +16,97 @@ import serial
 import serial.tools.list_ports
 import time
 
+import requests
+from flask import jsonify
 
-def get_index(info):
-	pd.set_option('display.max_colwidth', -1)
-	df = pd.read_csv('database/teste.csv')
+API_ENDPOINT = "http://localhost:8080/qr_code"
 
-	for i in range(len(df["Documento"])):
-		try:
-			a = int(info)
-			b = int( df["Documento"].get(i) )
-			if a == b:
-				return i
-		except:
-			print("Invalid input")
-	return -1
+def get_data_by_hash(_hash):
+    r = requests.post(url = API_ENDPOINT, json={ 'hash': _hash })
+    if r.status_code is 200:
+        return r.json()['_id']
+    return None
 
-def get_data(i):
-	pd.set_option('display.max_colwidth', -1)
-	df = pd.read_csv('database/teste.csv')
-
-	print("-----DADOS-----")
-	for data in df:
-		print(df[data].get(i))
- 
+def get_info_by_id(_id):
+    r = requests.get(API_ENDPOINT, params={ '_id': _id })
+    if r.status_code is 200:
+        return r.json()
+    return None
 
 def run_qr_scanner():
-
-	# initialize the video stream and allow the camera sensor to warm up
-	print("[INFO] starting video stream...")
-	# vs = VideoStream(src=0).start()
-	vs = VideoStream(src=0).start()
-	time.sleep(2.0)
+    # initialize the video stream and allow the camera sensor to warm up
+    print("[INFO] starting video stream...")
+    vs = VideoStream(src=0).start()
+    time.sleep(2.0)
 	 
-	# open the output CSV file for writing and initialize the set of
+    # open the output CSV file for writing and initialize the set of
 	# barcodes found thus far
-	csv = open("log/barcode.csv", "w")
-	found = set()
+    csv = open("log/barcode.csv", "w")
+    found = set()
 
 	# loop over the frames from the video stream
-	while True:
+    while True:
 		# grab the frame from the threaded video stream and resize it to
 		# have a maximum width of 400 pixels
-		frame = vs.read()
-		frame = imutils.resize(frame, width=400)
+        frame = vs.read()
+        frame = imutils.resize(frame, width=400)
 	 
 		# find the barcodes in the frame and decode each of the barcodes
-		barcodes = pyzbar.decode(frame)
+        barcodes = pyzbar.decode(frame)
 
 		# loop over the detected barcodes
-		for barcode in barcodes:
+        for barcode in barcodes:
 			# extract the bounding box location of the barcode and draw
 			# the bounding box surrounding the barcode on the image
-			(x, y, w, h) = barcode.rect
-			cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            (x, y, w, h) = barcode.rect
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 	 
 			# the barcode data is a bytes object so if we want to draw it
 			# on our output image we need to convert it to a string first
-			barcodeData = barcode.data.decode("utf-8")
-			barcodeType = barcode.type
+            barcodeData = barcode.data.decode("utf-8")
+			#barcodeType = barcode.type
 	 
 			# draw the barcode data and barcode type on the image
 			#text = "{} ({})".format(barcodeData, barcodeType)
 			#print(barcodeData)
-		
-			index = get_index(barcodeData)
-			if index >= 0:
-				print(get_data(index))
-			else:
-				print("Deu xablau!")
-
+            hash_code = get_data_by_hash(barcodeData)
+            print(hash_code)
 			#cv2.putText(frame, text, (x, y - 10),
 				#cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 	 
 			# if the barcode text is currently not in our CSV file, write
 			# the timestamp + barcode to disk and update the set
-			if barcodeData not in found:
-				csv.write("{},{}\n".format(datetime.datetime.now(),
-					barcodeData))
-				csv.flush()
-				found.add(barcodeData)
+            if barcodeData not in found:
+                csv.write("{},{}\n".format(datetime.datetime.now(),
+                    barcodeData))
+                csv.flush()
+                found.add(barcodeData)
 
 		# show the output frame
-		cv2.imshow("Barcode Scanner", frame)
-		key = cv2.waitKey(1) & 0xFF
+        cv2.imshow("Barcode Scanner", frame)
+        key = cv2.waitKey(1) & 0xFF
 	 
 		# if the `q` key was pressed, break from the loop
-		if key == ord("q"):
-			break
+        if key == ord("q"):
+            break
 	 
 	# close the output CSV file do a bit of cleanup
-	print("[INFO] cleaning up...")
-	csv.close()
-	cv2.destroyAllWindows()
-	vs.stop()
+    print("[INFO] cleaning up...")
+    csv.close()
+    cv2.destroyAllWindows()
+    vs.stop()
+
+    return hash_code
 
 # Function to send data to arduino
 def send_to_gate(data):
 	if(pySerial.isOpen()):
-		#print("....serial open...\n")
-		pySerial.write( data )
+		pySerial.write(data)
 
 def run_face_recognition():
 	# /SMART CAPIVARA SECTION
 
 	# load the known faces and embeddings
-	print("[INFO] loading encodings...")
 	data = pickle.loads(open(args["encodings"], "rb").read())
 
 	# initialize the video stream and pointer to output video file, then
@@ -145,7 +131,7 @@ def run_face_recognition():
 		# corresponding to each face in the input frame, then compute
 		# the facial embeddings for each face
 		boxes = face_recognition.face_locations(rgb,
-			model=args["detection_method"])
+			model="cnn")
 		encodings = face_recognition.face_encodings(rgb, boxes)
 		names = []
 
@@ -270,8 +256,6 @@ ap.add_argument("-o", "--output", type=str,
 	help="path to output video")
 ap.add_argument("-y", "--display", type=int, default=1,
 	help="whether or not to display output frame to screen")
-ap.add_argument("-d", "--detection-method", type=str, default="cnn",
-	help="face detection model to use: either `hog` or `cnn`")
 args = vars(ap.parse_args())
 
 

@@ -21,8 +21,9 @@ def auth_user():
 
         if usuario:
             if 'foto_id' in usuario.keys():
-                usuario.pop('foto_id')
-                usuario.update({ 'foto': convert_photo_to_base64(usuario['foto_id']) })
+                
+                usuario.update({ 'foto': 
+                    convert_photo_to_base64(str(usuario.pop('foto_id'))) })
 
             return jsonify({ 'ok': True,'tipo_usuario': 'visitante',
                 'data': usuario }), 200
@@ -32,7 +33,8 @@ def auth_user():
             if usuario:
                 if 'foto_id' in usuario.keys():
                     usuario.pop('foto_id')
-                    usuario.update({ 'foto': convert_photo_to_base64(usuario['foto_id']) })
+                    usuario.update({ 'foto': 
+                        convert_photo_to_base64(str(usuario.pop('foto_id'))) })
 
                 return jsonify({ 'ok': True,'tipo_usuario': 'autorizante',
                     'data': usuario }), 200
@@ -47,8 +49,8 @@ def read_qrcode():
     data = request.get_json()
     visitante = mongo.db.visitantes.find_one({ 'hash': data['hash'] })
     if visitante:
-        return jsonify({ 'ok': True, 'data': visitante}), 200
+        return jsonify({ 'ok': True, '_id': visitante['_id'] }), 200
     else:
-        return jsonify({ 'ok': False, 'data': 'Visitante não encontrado' }), 401
+        return jsonify({ 'ok': False, 'message': 'Visitante não encontrado' }), 401
     return jsonify({'ok': False, 'message': 'Parametros invalidos: {}'
                 .format(data['message'])}), 400
