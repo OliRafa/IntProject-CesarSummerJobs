@@ -7,10 +7,11 @@ import hashlib
 from app import app, mongo, flask_bcrypt, jwt
 from app.schemas import validate_visitante, validate_visitante_auth
 from app.controllers import autorizante
-from app.utilities import generate_qr_code
+from app.utilities import generate_qr_code, create_folder
 import logger
 from gridfs import GridFS
 import base64
+import requests
 
 
 ROOT_PATH = os.environ.get('ROOT_PATH')
@@ -26,6 +27,12 @@ def registro():
         data.update({ 'validado': False })
         _id = mongo.db.visitantes.insert_one(data)
         photo_decoded = base64.decodebytes(str.encode(photo_base64))
+        
+        output_photo = open(create_folder(ROOT_PATH, _id) + "/0001.jpg","wb")
+        output_photo.write(photo_decoded)
+        output_photo.close()
+
+        requests.get("http://localhost:8081/encode_faces")
 
         fs = GridFS(mongo.db)
         photo_id = fs.put(photo_decoded)
@@ -54,10 +61,16 @@ def user():
 
 @app.route('/visitante/<string:_id>', methods=['GET'])
 def get_status_visitante(_id):
-    data = mongo.db.visitantes.find_one({ '_id': ObjectId(_id )})
+    data = mongo.db.visitantes.find_one({ '_id': ObjectId(_id) })
     fs = GridFS(mongo.db)
     qr_code = fs.get(ObjectId(data['qr_code_id']))
     return send_file(qr_code, mimetype='image/png'), 200
+
+@app.route('/visitante', methods=['GET'])
+def get_visitante():
+    print(request.args['_id'])
+    data = mongo.db.visitantes.find_one({ '_id': ObjectId(request.args['_id']) })
+    return jsonify(data), 200
 
 @app.route('/visitante', methods=['PUT'])
 def update_visitante():
