@@ -28,11 +28,11 @@ def registro():
         _id = mongo.db.visitantes.insert_one(data)
         photo_decoded = base64.decodebytes(str.encode(photo_base64))
         
-        output_photo = open(create_folder(ROOT_PATH, _id) + "/0001.jpg","wb")
+        output_photo = open(create_folder(ROOT_PATH, _id.inserted_id) + "/0001.jpg","wb")
         output_photo.write(photo_decoded)
         output_photo.close()
 
-        requests.get("http://localhost:8081/encode_faces")
+        requests.get("http://179.106.211.74:8081/encode_faces")
 
         fs = GridFS(mongo.db)
         photo_id = fs.put(photo_decoded)

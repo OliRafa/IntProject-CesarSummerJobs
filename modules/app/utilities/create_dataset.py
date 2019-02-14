@@ -5,13 +5,14 @@ def create_folder(ROOT_PATH, _id):
     dataset = False
     create = True
     path = 0
+    DATASET_PATH = ROOT_PATH + '/dataset'
+    _id = str(_id)
 
     for filename in os.listdir(ROOT_PATH):
         if filename == 'dataset': dataset = True
 
     if not dataset:
         os.system("mkdir dataset")
-        DATASET_PATH = ROOT_PATH + '/dataset'
 
     for foldername in os.listdir(DATASET_PATH):
         if foldername is _id:
