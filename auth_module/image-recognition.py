@@ -17,8 +17,8 @@ import serial.tools.list_ports
 import time
 
 import requests
-from flask import jsonify
 
+ROOT_PATH = os.getcwd()
 API_ENDPOINT = "http://localhost:8080/qr_code"
 
 def get_data_by_hash(_hash):
@@ -107,7 +107,7 @@ def run_face_recognition():
 	# /SMART CAPIVARA SECTION
 
 	# load the known faces and embeddings
-	data = pickle.loads(open(args["encodings"], "rb").read())
+	data = pickle.loads(f.read())
 
 	# initialize the video stream and pointer to output video file, then
 	# allow the camera sensor to warm up
@@ -244,20 +244,14 @@ def run_face_recognition():
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
-#ap.add_argument("-o", "--output", type=str, default="barcodes.csv",
-#	help="path to output CSV file containing barcodes")
-#args = vars(ap.parse_args())
-
-# construct the argument parser and parse the arguments
-#ap = argparse.ArgumentParser()
-ap.add_argument("-e", "--encodings", required=True,
-	help="path to serialized db of facial encodings")
 ap.add_argument("-o", "--output", type=str,
 	help="path to output video")
 ap.add_argument("-y", "--display", type=int, default=1,
 	help="whether or not to display output frame to screen")
 args = vars(ap.parse_args())
 
+
+f = open(ROOT_PATH + '/encodings.pickle', "rb")
 
 run_qr_scanner()
 # Facial Recognition Parts
