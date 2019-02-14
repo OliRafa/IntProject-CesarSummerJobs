@@ -8,11 +8,14 @@ import imutils
 import pickle
 import time
 import cv2
-
-# READ CSV
-
 import datetime
-import pandas as pd
+
+# CSV FILE
+#import 
+
+# OPERATIONAL SYSTEM
+
+import os
 
 # ARDUINO SERIAL COMMUNICATION
 
@@ -22,10 +25,15 @@ import time
 
 import requests
 
-API_ENDPOINT = 'http://179.106.208.85:8080'
+ROOT_PATH = os.path.dirname(os.path.realpath(__file__))
+ROOT_PATH = os.path.split(ROOT_PATH)[0]
+ENCODINGS_PATH = ROOT_PATH + "/encodings.pickle"
+
+API_ENDPOINT = 'http://179.106.208.155:8080'
 
 
 def get_data_by_hash(_hash):
+    print "Trying to get data"
     r = requests.post(url=API_ENDPOINT+'/qr_code', json={'hash': _hash})
     if r.status_code is 200:
         return r.json()['_id']
@@ -33,7 +41,8 @@ def get_data_by_hash(_hash):
 
 
 def get_info_by_id(_id):
-    r = requests.get(API_ENDPOINT+'/visitante/', params={'_id': _id})
+    print "Trying to get info by id"
+    r = requests.get(API_ENDPOINT+'/visitante', params={'_id': _id})
     if r.status_code is 200:
         print r.json()['nome']
         return r.json()['nome']
@@ -57,6 +66,8 @@ def run_qr_scanner():
     # loop over the frames from the video stream
 
     while True:
+        print "Waiting ofr QR Code"
+    
 
         # grab the frame from the threaded video stream and resize it to
         # have a maximum width of 400 pixels
@@ -84,12 +95,11 @@ def run_qr_scanner():
             # on our output image we need to convert it to a string first
 
             barcodeData = barcode.data.decode('utf-8')
+            print "Barcode Data: " + barcodeData
 
             # barcodeType = barcode.type
 
             # draw the barcode data and barcode type on the image
-            # text = "{} ({})".format(barcodeData, barcodeType)
-            # print(barcodeData)
 
             hash_code = get_data_by_hash(barcodeData)
             if hash_code is None:
@@ -97,10 +107,6 @@ def run_qr_scanner():
             else:
                 print 'ID: ' + hash_code
                 get_out_qr = True
-
-            # print("BarcodeData: " + str(barcodeData) + "\tHash code: " + str(hash_code))
-            # cv2.putText(frame, text, (x, y - 10),
-                # cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
             # if the barcode text is currently not in our CSV file, write
             # the timestamp + barcode to disk and update the set
@@ -113,7 +119,7 @@ def run_qr_scanner():
 
         # show the output frame
 
-        cv2.imshow('Barcode Scanner', frame)
+        cv2.imshow('QRCode Scanner', frame)
         key = cv2.waitKey(1) & 0xFF
 
         # if the `q` key was pressed, break from the loop
@@ -144,7 +150,7 @@ def run_face_recognition(id_usuario):
 
     # load the known faces and embeddings
 
-    data = pickle.loads(open(args['encodings'], 'rb').read())
+    data = pickle.loads(open(ENCODINGS_PATH, 'rb').read())
 
     # initialize the video stream and pointer to output video file, then
     # allow the camera sensor to warm up
@@ -226,6 +232,7 @@ def run_face_recognition(id_usuario):
                     print 'Dupla verificacao'
                     
                 name_window = get_info_by_id(id_usuario)
+                print "NOME: " + name_window + " ID: " + id_usuario
 
             # update the list of names
 
@@ -306,7 +313,7 @@ def run_face_recognition(id_usuario):
         # the screen
 
         if args['display'] > 0:
-            cv2.imshow('Frame', frame)
+            cv2.imshow('Face Detection', frame)
             key = cv2.waitKey(1) & 0xFF
 
             # if the `q` key was pressed, break from the loop
@@ -338,7 +345,7 @@ ap = argparse.ArgumentParser()
 # construct the argument parser and parse the arguments
 # ap = argparse.ArgumentParser()
 
-ap.add_argument('-e', '--encodings', required=True,
+ap.add_argument('-e', '--encodings', required=False,
                 help='path to serialized db of facial encodings')
 ap.add_argument('-o', '--output', type=str, help='path to output video')
 ap.add_argument('-y', '--display', type=int, default=1,

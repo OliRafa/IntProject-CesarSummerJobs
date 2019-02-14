@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -44,6 +45,7 @@ public class Visitante extends AppCompatActivity {
     private TextView txt_nome, txt_datainicio, txt_datafim, txt_autorizante, txt_documento;
 
     private Bitmap bmpQR;
+    private ImageView visitantePicture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,8 @@ public class Visitante extends AppCompatActivity {
         txt_autorizante = (TextView) findViewById(R.id.vis_txt_autorizante);
         txt_documento = (TextView) findViewById(R.id.vis_txt_documento);
 
+        visitantePicture = (ImageView) findViewById(R.id.vis_img_cliente);
+
         this.usuario = new Pessoa();
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -71,6 +75,7 @@ public class Visitante extends AppCompatActivity {
                 usuario.setDataInicio( extras.getString("usuario_datainicio") );
                 usuario.setDataFim( extras.getString("usuario_datafim") );
                 usuario.setAutorizante( extras.getString("usuario_autorizante") );
+                usuario.setFoto( extras.getString("usuario_foto") );
 
                 this.ip_address = extras.getString("ip_address");
 
@@ -109,6 +114,17 @@ public class Visitante extends AppCompatActivity {
         txt_datafim.setText( usuario.getDataFim() );
         txt_autorizante.setText( usuario.getAutorizante() );
         txt_documento.setText( usuario.getRGPassaporte() );
+
+        try{
+            byte[] decodedString = Base64.decode(usuario.getFoto(), Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            visitantePicture.setImageBitmap(decodedByte);
+
+            Log.d("BASE64" , usuario.getFoto() );
+        }
+        catch (Exception e){
+            Log.e("PROBLEM LOADING PICTURE", e.getMessage());
+        }
 
     }
 

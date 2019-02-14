@@ -97,6 +97,14 @@ public class Entrar extends AppCompatActivity {
                             usuario.setDataFim( response.getJSONObject("data").get("data_final").toString() );
                             usuario.setAutorizante( response.getJSONObject("data").get("autorizante").toString() );
 
+                            try{
+                                usuario.setFoto( response.getJSONObject("data").get("foto").toString() );
+                                Log.i("FOTO BASE ", usuario.getFoto());
+                            }
+                            catch (JSONException e){
+                                Log.e("PROBLEMA EM FOTO", e.getMessage());
+                            }
+
                             Log.d("LOGIN", "LOG INTO VISITANTE");
                             Intent intent = new Intent(Entrar.this, Visitante.class);
 
@@ -108,6 +116,8 @@ public class Entrar extends AppCompatActivity {
                             intent.putExtra("usuario_datainicio", usuario.getDataInicio());
                             intent.putExtra("usuario_datafim", usuario.getDataFim());
                             intent.putExtra("usuario_autorizante", usuario.getAutorizante());
+                            intent.putExtra("usuario_foto", usuario.getFoto());
+
 
                             intent.putExtra("ip_address", Entrar.this.ip_address);
                             startActivity(intent);

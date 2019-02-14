@@ -2,6 +2,7 @@ import os
 from imutils import paths
 import face_recognition
 import pickle
+import cv2
 
 from flask import Flask
 from flask import jsonify

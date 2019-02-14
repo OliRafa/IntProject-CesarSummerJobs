@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String ip_address = "http://179.106.208.202:8080";
+    private String ip_address = "http://179.106.208.155:8080";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
